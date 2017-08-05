@@ -1,9 +1,13 @@
 int encoderPin1 = 2;
 int encoderPin2 = 3;
 
-int redPin = 11;
-int bluePin = 10;
-int greenPin = 9;
+// these LEDs are in forward voltage when output is LOW
+int redPin = 10;
+int bluePin = 9;
+int greenPin = 11;
+
+int buttonPin = 8;
+int buttonValue = 0;
 
 volatile int lastEncoded = 0;
 volatile long encoderValue = 0;
@@ -16,28 +20,36 @@ void setup() {
 
   pinMode(encoderPin1, INPUT);
   pinMode(encoderPin2, INPUT);
+  
+  pinMode(buttonPin, INPUT);
 
   digitalWrite(encoderPin1, HIGH);
   digitalWrite(encoderPin2, HIGH);
 
   attachInterrupt(0, updateEncoder, CHANGE);
   attachInterrupt(1, updateEncoder, CHANGE);
+  
 }
 
 void loop() {
   // put your main code here, to run repeatedly:  
-  setColors();
+  setColor(255, 234, 0);
   delay(250);
+  buttonValue = digitalRead(buttonPin);
+  Serial.println(buttonValue);
 }
 
 void setColors() {
-   setColor(255, 0, 0);  // red
+   setColor(0, 0, 0);  // rgb all on
 }
 
 void setColor(int red, int green, int blue){
-  analogWrite(redPin, red);
-  analogWrite(greenPin, green);
-  analogWrite(bluePin, blue);
+  int redValue = 255 - red;
+  int greenValue = 255 - green;
+  int blueValue = 255 - blue;
+  analogWrite(redPin, redValue);
+  analogWrite(greenPin, greenValue);
+  analogWrite(bluePin, blueValue);
 }
 
 void updateEncoder(){
